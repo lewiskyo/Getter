@@ -12,8 +12,9 @@
 #include <cstdint>
 #include <sys/time.h>
 #include <list>
-// #include "../Tools/Lock.hpp"
-#include "Lock.h"
+#include <memory>
+#include "../Tools/Lock.h"
+// #include "Lock.h"
 
 
 struct TimerInfo
@@ -22,14 +23,15 @@ struct TimerInfo
 	long expire_time;  //  超时时间(增量 ms)
 	uint32_t src;          //  对应是哪个Actor注册的
 	uint32_t interval;     //  循环间隔时间(ms)
+	bool is_working;       //  标记是否还在工作
 	
 };
 
 struct TimerComp
 {
-	bool operator()(const TimerInfo& lhs, const TimerInfo& rhs)
+	bool operator()(const std::shared_ptr<TimerInfo>& lhs, const std::shared_ptr<TimerInfo>& rhs)
 	{
-		return lhs.expire_time < rhs.expire_time;
+		return lhs.get()->expire_time < rhs.get()->expire_time;
 	}
 };
 
@@ -40,11 +42,11 @@ struct TimerManager
 	CasLock delete_timer_lock;
 
 	//TODO value改用shared_ptr
-	std::map<uint32_t, TimerInfo> timer_map;
-	std::priority_queue<TimerInfo, std::vector<TimerInfo>, TimerComp> timer_queue;
+	std::map<uint32_t, std::shared_ptr<TimerInfo> > timer_map;
+	std::priority_queue<std::shared_ptr<TimerInfo>, std::vector<std::shared_ptr<TimerInfo> >, TimerComp> timer_queue;
 
 	// 新添加的定时器列表,在update_timer时再加入到优先队列
-	std::list<TimerInfo> wait_add_timer_list;
+	std::list<std::shared_ptr<TimerInfo> > wait_add_timer_list;
 
 	// 待删除的定时器列表, 再update_timer时再从优先队列和map中删除
 	std::list<uint32_t> delete_timer_id_list;
