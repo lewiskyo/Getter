@@ -1,3 +1,6 @@
+#ifndef LOCK_H
+#define LOCK_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -52,3 +55,5 @@ public:
 		CasLock *lock;
 
 };
+
+#endif
