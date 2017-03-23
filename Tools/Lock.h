@@ -30,23 +30,23 @@ public:
 		}
 	}
 
-	friend class LockGuard;
+	friend class MyLockGuard;
 
 private:
 	int mutex;
 };
 
 
-class LockGuard
+class MyLockGuard
 {
 public:
-	LockGuard(CasLock * _lock)
+	MyLockGuard(CasLock * _lock)
 	{
 		lock = _lock;
 		lock->lock();
 	}
 
-	~LockGuard()
+	~MyLockGuard()
 	{
 		lock->unlock();
 	}

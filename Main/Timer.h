@@ -2,7 +2,6 @@
 #define TIMER_H
 
 #include <iostream>
-#include <cstdint>
 #include <queue>
 #include <vector>
 #include <map>

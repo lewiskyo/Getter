@@ -24,7 +24,7 @@ int timer_create(long after_time, uint32_t src, uint32_t interval = 0)
 	timer.get()->is_working = true;
 
 	{
-		LockGuard guard(&timer_mng.add_timer_lock);
+		MyLockGuard guard(&timer_mng.add_timer_lock);
 
 		timer.get()->id = timer_mng.id_count;
 		timer_mng.wait_add_timer_list.push_back(timer);
@@ -37,7 +37,7 @@ int timer_create(long after_time, uint32_t src, uint32_t interval = 0)
 
 void timer_delete(uint32_t timer_id)
 {
-	LockGuard guard(&timer_mng.delete_timer_lock);
+	MyLockGuard guard(&timer_mng.delete_timer_lock);
 	timer_mng.delete_timer_id_list.push_back(timer_id);
 }
 
@@ -51,7 +51,7 @@ void update_timer()
 
 	//先删除定时器 交换元素减少锁的竞争时间
 	{
-		LockGuard lockguard(&timer_mng.delete_timer_lock);
+		MyLockGuard lockguard(&timer_mng.delete_timer_lock);
 		delete_tmp.swap(timer_mng.delete_timer_id_list);
 	}
 
@@ -70,7 +70,7 @@ void update_timer()
 
 	//再加入定时器 交换元素减少锁的竞争时间
 	{
-		LockGuard lockguard(&timer_mng.add_timer_lock);
+		MyLockGuard lockguard(&timer_mng.add_timer_lock);
 		add_tmp.swap(timer_mng.wait_add_timer_list);
 	}
 
