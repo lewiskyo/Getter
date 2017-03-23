@@ -1,10 +1,10 @@
 #include "Timer.h"
 
-struct TimerManager timer_mng;
-
 using namespace std;
 
-long get_current_time()
+struct Timer::TimerManager timer_mng;
+
+long Timer::get_current_time()
 {
 	struct timeval tv;
 
@@ -14,7 +14,7 @@ long get_current_time()
 }
 
 
-int timer_create(long after_time, uint32_t src, uint32_t interval = 0)
+int Timer::timer_create(long after_time, uint32_t src, uint32_t interval = 0)
 {
 	shared_ptr<TimerInfo> timer(new TimerInfo());
 	// struct TimerInfo timer;
@@ -35,7 +35,7 @@ int timer_create(long after_time, uint32_t src, uint32_t interval = 0)
 	return timer.get()->id;
 }
 
-void timer_delete(uint32_t timer_id)
+void Timer::timer_delete(uint32_t timer_id)
 {
 	MyLockGuard guard(&timer_mng.delete_timer_lock);
 	timer_mng.delete_timer_id_list.push_back(timer_id);
@@ -43,7 +43,7 @@ void timer_delete(uint32_t timer_id)
 
 
 
-void update_timer()
+void Timer::update_timer()
 {
 	timer_mng.now = get_current_time();
 	list<uint32_t> delete_tmp;
@@ -82,7 +82,7 @@ void update_timer()
 
 }
 
-void execute_timer()
+void Timer::execute_timer()
 {
 	while(!timer_mng.timer_queue.empty())
 	{	
@@ -100,22 +100,22 @@ void execute_timer()
 	}
 }
 
-void timer_thread()
+void Timer::timer_thread()
 {
 	while(1)
 	{
-		update_timer();
-		execute_timer();
+		Timer::update_timer();
+		Timer::execute_timer();
 		usleep(1000);
 	}
 }
 
-void timer_init()
+void Timer::initial()
 {
 
 }
 
-void timer_run()
+void Timer::run()
 {
 	timer_mng.th = thread(timer_thread);
 }

@@ -2,10 +2,10 @@
 
 using namespace std;
 
-struct SchedulerManager scheduler_manager;
+struct Getter::SchedulerManager scheduler_manager;
 
 
-Actor* fetch_actor()
+Getter::Actor* Getter::fetch_actor()
 {
 	MyLockGuard lockguard(&scheduler_manager.pop_lock);	
 	if (scheduler_manager.pop_queue.empty())
@@ -18,23 +18,23 @@ Actor* fetch_actor()
 		return NULL;
 	else
 	{
-		Actor* actor = scheduler_manager.pop_queue.front();
+		auto actor = scheduler_manager.pop_queue.front();
 		scheduler_manager.pop_queue.pop();
 
 		return actor;
 	}
 }
 
-void add_actor_into_queue(Actor* actor)
+void Getter::add_actor_into_queue(Actor* actor)
 {
 	MyLockGuard lockguard(&scheduler_manager.push_lock);
 	scheduler_manager.push_queue.push(actor);
 }
 
 
-void scheduling_actor(Scheduler* scheduler)
+void Getter::scheduling_actor(Scheduler* scheduler)
 {
-	Actor* processing_actor = scheduler->processing_actor;
+	auto processing_actor = scheduler->processing_actor;
 
 	// 未初始化 先进行初始化
 	if (processing_actor->is_inited)
@@ -50,7 +50,7 @@ void scheduling_actor(Scheduler* scheduler)
 			processing_actor->pop_queue.swap(processing_actor->push_queue);
 		}
 
-		Message* msg = processing_actor->pop_queue.front();
+		auto msg = processing_actor->pop_queue.front();
 		processing_actor->pop_queue.pop();
 
 		// 消息调度
@@ -70,7 +70,7 @@ void scheduling_actor(Scheduler* scheduler)
 }
 
 
-void scheduler_thread(Scheduler* scheduler)
+void Getter::scheduler_thread(Scheduler* scheduler)
 {
 	while(true)
 	{
@@ -86,7 +86,7 @@ void scheduler_thread(Scheduler* scheduler)
 
 
 
-void scheduler_init()
+void Getter::initial()
 {
 	int thread_count = 3;
 
@@ -97,7 +97,7 @@ void scheduler_init()
 	}
 }
 
-void scheduler_run()
+void Getter::run()
 {
 	for(int i = 0; i < scheduler_manager.v_schedulers.size(); ++i)
 	{
@@ -113,7 +113,7 @@ void scheduler_run()
 }
 
 
-void send_message(Message* msg, int des)
+void Getter::send(Message* msg, int des)
 {
 	auto it = scheduler_manager.actor_manager.actor_id_map.find(des);
 
