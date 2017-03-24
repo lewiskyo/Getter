@@ -1,0 +1,2 @@
+ActorSoLib/ActorExample.so : ActorSo/ActorExample.cpp
+	g++ -MM -o $@ $^ -fPIC -shared

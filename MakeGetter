@@ -1,0 +1,7 @@
+SRC=\
+Main/Api.cpp\
+Main/Scheduler.cpp\
+Main/Timer.cpp\
+
+Getter : $(SRC)
+	g++ -MM -g -Wall -o $@ $^ -lpthread --std=c++0x
