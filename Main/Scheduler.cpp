@@ -2,10 +2,10 @@
 
 using namespace std;
 
-struct Getter::SchedulerManager scheduler_manager;
+struct Scheduler::SchedulerManager scheduler_manager;
 
 
-Getter::Actor* Getter::fetch_actor()
+Scheduler::Actor* Scheduler::fetch_actor()
 {
 	MyLockGuard lockguard(&scheduler_manager.pop_lock);	
 	if (scheduler_manager.pop_queue.empty())
@@ -25,14 +25,14 @@ Getter::Actor* Getter::fetch_actor()
 	}
 }
 
-void Getter::add_actor_into_queue(Actor* actor)
+void Scheduler::add_actor_into_queue(Actor* actor)
 {
 	MyLockGuard lockguard(&scheduler_manager.push_lock);
 	scheduler_manager.push_queue.push(actor);
 }
 
 
-void Getter::scheduling_actor(Scheduler* scheduler)
+void Scheduler::scheduling_actor(Scheduler* scheduler)
 {
 	auto processing_actor = scheduler->processing_actor;
 
@@ -54,7 +54,7 @@ void Getter::scheduling_actor(Scheduler* scheduler)
 		processing_actor->pop_queue.pop();
 
 		// 消息调度
-		processing_actor->actor_struct->_dispatch(msg);
+		processing_actor->actor_struct->_dispatch(processing_actor, msg);
 
 		{
 			MyLockGuard lockguard(&processing_actor->push_queue_lock);
@@ -72,7 +72,7 @@ void Getter::scheduling_actor(Scheduler* scheduler)
 }
 
 
-void Getter::scheduler_thread(Scheduler* scheduler)
+void Scheduler::scheduler_thread(Scheduler* scheduler)
 {
 	while(true)
 	{
@@ -88,7 +88,7 @@ void Getter::scheduler_thread(Scheduler* scheduler)
 
 
 
-void Getter::initial()
+void Scheduler::initial()
 {
 	int thread_count = 3;
 
@@ -99,11 +99,11 @@ void Getter::initial()
 	}
 }
 
-void Getter::run()
+void Scheduler::run()
 {
-	for(int i = 0; i < scheduler_manager.v_schedulers.size(); ++i)
+	for(auto iter = scheduler_manager.v_schedulers.begin(); iter != scheduler_manager.v_schedulers.end(); ++iter)
 	{
-		scheduler_manager.v_schedulers[i]->th = thread(scheduler_thread, scheduler_manager.v_schedulers[i]);
+		(*iter)->th = thread(scheduler_thread, *iter);
 	}
 
 	while(scheduler_manager.actor_manager.actor_id_map.size() > 0)
@@ -112,10 +112,19 @@ void Getter::run()
 		
 		sleep(1);
 	}
+
+}
+
+void Scheduler::stop()
+{
+	for(auto iter = scheduler_manager.v_schedulers.begin(); iter != scheduler_manager.v_schedulers.end(); ++iter)
+	{
+		(*iter)->th.join();
+	}
 }
 
 
-void Getter::send(Message* msg, int des)
+void Scheduler::send(Message* msg, int des)
 {
 	auto it = scheduler_manager.actor_manager.actor_id_map.find(des);
 
@@ -130,17 +139,16 @@ void Getter::send(Message* msg, int des)
 			if (!actor->is_scheduling)
 			{
 				actor->is_scheduling = true;
-				Getter::add_actor_into_queue(actor);
+				add_actor_into_queue(actor);
 			}
 		}
 	}
 }
 
 
-void* load_so(string name)
+void* Scheduler::load_so(string name)
 {
     void *handle = NULL;
-    char *error;
 
     string so_path("./ActorSoLib/Actor" + name + ".so");
 
@@ -157,47 +165,47 @@ void* load_so(string name)
     return handle;
 }
 
-void new_actor(string name)
+void Scheduler::new_actor(string name)
 {
-	Getter::ActorStruct* actor_struct = NULL;
+	ActorStruct* actor_struct = NULL;
 	{
 
-		lock_guard<mutex> lck(scheduler_manager.actor_struct_manager.mutex);
+		lock_guard<mutex> lck(scheduler_manager.actor_struct_manager.mtx);
 
 		auto it = scheduler_manager.actor_struct_manager.actor_struct_map.find(name);
 
-		if(it != scheduler_manager.actor_struct_manager.actor_struct_map.end())
+		if (it != scheduler_manager.actor_struct_manager.actor_struct_map.end())
 		{
-			actor_struct actor_struct = it->second;
+			actor_struct = it->second;
 		}
 		else
 		{
 			void* handle = load_so(name);
-			Getter::ActorStruct* new_as = new Getter::ActorStruct();
+			ActorStruct* new_as = new ActorStruct();
 			new_as->_create = (void*(*)(string))dlsym(handle, "create");
 			new_as->_init = (bool(*)())dlsym(handle, "init");
-			new_as->_dispatch = (void(*)(Getter::Actor*, Message*))dlsym(handle, "dispatch");
+			new_as->_dispatch = (void(*)(void*, Message*))dlsym(handle, "dispatch");
 			new_as->_destroy = (void(*)())dlsym(handle, "destroy");
 
-			scheduler_manager.actor_struct_manager.actor_struct_map.insert(pair<string, Getter::ActorStruct*>(name, new_as));
+			scheduler_manager.actor_struct_manager.actor_struct_map.insert(pair<string, ActorStruct*>(name, new_as));
 
 			actor_struct = new_as;
 		}
 	}
 
-	Getter::Actor* actor = new Getter::Actor()
+	Actor* actor = new Actor();
 	actor->actor_struct = actor_struct;
 
 	{
-		lock_guard<mutex> lck(scheduler_manager.actor_manager.mutex);
+		lock_guard<mutex> lck(scheduler_manager.actor_manager.mtx);
 		actor->id = scheduler_manager.actor_manager.id_count++;
 
-		scheduler_manager.actor_manager.actor_id_map.insert(pair<uint32_t, Getter::Actor*>(actor->id, actor));
+		scheduler_manager.actor_manager.actor_id_map.insert(pair<uint32_t, Actor*>(actor->id, actor));
 
 	}
 
 	// 加入调度 进行init
-	Getter::add_actor_into_queue(actor);
+	add_actor_into_queue(actor);
 
 }	
 

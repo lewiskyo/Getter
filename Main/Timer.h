@@ -77,8 +77,11 @@ namespace Timer
 	void initial();
 	// 运行函数
 	void run();
+	// 停止处理函数
+	void stop();
 	// 线程函数
 	void timer_thread();
+
 }
 
 

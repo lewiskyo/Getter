@@ -1,7 +1,8 @@
 SRC=\
-Main/Api.cpp\
-Main/Scheduler.cpp\
-Main/Timer.cpp\
+Main/Api.cpp \
+Main/Scheduler.cpp \
+Main/Timer.cpp \
+Main/main.cpp
 
 Getter : $(SRC)
-	g++ -MM -g -Wall -o $@ $^ -lpthread --std=c++0x
+	g++ -g -Wall -o $@ $^ -lpthread --std=c++0x -ldl

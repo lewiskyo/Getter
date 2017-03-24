@@ -104,8 +104,8 @@ void Timer::timer_thread()
 {
 	while(1)
 	{
-		Timer::update_timer();
-		Timer::execute_timer();
+		update_timer();
+		execute_timer();
 		usleep(1000);
 	}
 }
@@ -118,4 +118,9 @@ void Timer::initial()
 void Timer::run()
 {
 	timer_mng.th = thread(timer_thread);
+}
+
+void Timer::stop()
+{
+	timer_mng.th.join();
 }

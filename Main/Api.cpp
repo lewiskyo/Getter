@@ -1,10 +1,12 @@
 #include "Api.h"
+#include "Scheduler.h"
+#include "Timer.h"
 
 using namespace std;
 
 void Api::send(Message* msg, int des)
 {
-	Getter::send(msg, des);
+	Scheduler::send(msg, des);
 }
 
 int Api::timer_create(long after_time, uint32_t src, uint32_t interval = 0)

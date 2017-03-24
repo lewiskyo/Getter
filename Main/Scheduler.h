@@ -16,7 +16,7 @@
 // #include "Lock.h"
 
 
-namespace Getter
+namespace Scheduler
 {
 	// 使用 _create 来表示 void* (*)(string);
 	typedef void* (*create)(std::string);   //  对应Actor构造函数
@@ -132,9 +132,11 @@ namespace Getter
 
 	void run();
 
-	void new_actor();
+	void stop();
 
-	void load_so();
+	void new_actor(std::string);
+
+	void* load_so(std::string);
 }
 
 
