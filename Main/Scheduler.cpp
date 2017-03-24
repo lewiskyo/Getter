@@ -38,7 +38,7 @@ void Scheduler::scheduling_actor(Scheduler* scheduler)
 	auto processing_actor = scheduler->processing_actor;
 
 	// 未初始化 先进行初始化
-	if (processing_actor->is_inited)
+	if (!processing_actor->is_inited)
 	{
 		processing_actor->actor_struct->_init();	
 	}
