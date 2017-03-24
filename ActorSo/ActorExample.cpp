@@ -15,7 +15,7 @@ private:
 	
 };
 
-Example::Example(std::string args)
+Example::Example(string args)
 {
 	this->args = args;
 }
@@ -23,7 +23,7 @@ Example::Example(std::string args)
 
 extern "C"
 {
-	void *create(std::string args)
+	void *create(string args)
 	{
 		Example* example = new Example(args);
 		return example;
@@ -38,7 +38,7 @@ extern "C"
 	{
 		Example* example = (Example*)actor;
 
-		std::cout << "Example Dispatch" << std::endl;
+		cout << "Example Dispatch" << endl;
 	}
 
 	void destroy()

@@ -134,7 +134,7 @@ namespace Scheduler
 
 	void stop();
 
-	void new_actor(std::string);
+	int new_actor(std::string);
 
 	void* load_so(std::string);
 }

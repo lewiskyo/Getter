@@ -18,3 +18,8 @@ void Api::timer_delete(uint32_t timer_id)
 {	
 	Timer::timer_delete(timer_id);
 }
+
+int Api::new_actor(string name)
+{
+	return Scheduler::new_actor(name);
+}

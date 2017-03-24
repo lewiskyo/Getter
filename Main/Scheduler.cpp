@@ -1,4 +1,5 @@
 #include "Scheduler.h"
+#include "Api.h"
 
 using namespace std;
 
@@ -97,6 +98,10 @@ void Scheduler::initial()
 		Scheduler* scheduler = new Scheduler();
 		scheduler_manager.v_schedulers.push_back(scheduler);
 	}
+
+	// new some actor
+	
+	Api::new_actor("Example");
 }
 
 void Scheduler::run()
@@ -165,7 +170,7 @@ void* Scheduler::load_so(string name)
     return handle;
 }
 
-void Scheduler::new_actor(string name)
+int Scheduler::new_actor(string name)
 {
 	ActorStruct* actor_struct = NULL;
 	{
@@ -206,6 +211,8 @@ void Scheduler::new_actor(string name)
 
 	// 加入调度 进行init
 	add_actor_into_queue(actor);
+
+	return actor->id;
 
 }	
 

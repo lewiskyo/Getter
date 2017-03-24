@@ -14,6 +14,8 @@ namespace Api
 
 	void timer_delete(uint32_t);
 
+	int new_actor(std::string);
+
 }
 
 
