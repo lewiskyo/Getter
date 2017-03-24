@@ -62,6 +62,8 @@ void Getter::scheduling_actor(Scheduler* scheduler)
 
 			if (processing_actor->msg_count > 0)
 				add_actor_into_queue(processing_actor);
+			else
+				processing_actor->is_scheduling = false;
 		}
 
 		scheduler->processing_actor = NULL;
@@ -124,6 +126,78 @@ void Getter::send(Message* msg, int des)
 			MyLockGuard lockguard(&actor->push_queue_lock);
 			actor->push_queue.push(msg);
 			++actor->msg_count;
+
+			if (!actor->is_scheduling)
+			{
+				actor->is_scheduling = true;
+				Getter::add_actor_into_queue(actor);
+			}
 		}
 	}
 }
+
+
+void* load_so(string name)
+{
+    void *handle = NULL;
+    char *error;
+
+    string so_path("./ActorSoLib/Actor" + name + ".so");
+
+    //打开动态链接库
+    handle = dlopen(so_path.c_str(), RTLD_LAZY);
+    if (!handle) {
+    	fprintf(stderr, "%s\n", dlerror());
+    	exit(EXIT_FAILURE);
+    }
+
+    //清除之前存在的错误
+    dlerror();
+
+    return handle;
+}
+
+void new_actor(string name)
+{
+	Getter::ActorStruct* actor_struct = NULL;
+	{
+
+		lock_guard<mutex> lck(scheduler_manager.actor_struct_manager.mutex);
+
+		auto it = scheduler_manager.actor_struct_manager.actor_struct_map.find(name);
+
+		if(it != scheduler_manager.actor_struct_manager.actor_struct_map.end())
+		{
+			actor_struct actor_struct = it->second;
+		}
+		else
+		{
+			void* handle = load_so(name);
+			Getter::ActorStruct* new_as = new Getter::ActorStruct();
+			new_as->_create = (void*(*)(string))dlsym(handle, "create");
+			new_as->_init = (bool(*)())dlsym(handle, "init");
+			new_as->_dispatch = (void(*)(Getter::Actor*, Message*))dlsym(handle, "dispatch");
+			new_as->_destroy = (void(*)())dlsym(handle, "destroy");
+
+			scheduler_manager.actor_struct_manager.actor_struct_map.insert(pair<string, Getter::ActorStruct*>(name, new_as));
+
+			actor_struct = new_as;
+		}
+	}
+
+	Getter::Actor* actor = new Getter::Actor()
+	actor->actor_struct = actor_struct;
+
+	{
+		lock_guard<mutex> lck(scheduler_manager.actor_manager.mutex);
+		actor->id = scheduler_manager.actor_manager.id_count++;
+
+		scheduler_manager.actor_manager.actor_id_map.insert(pair<uint32_t, Getter::Actor*>(actor->id, actor));
+
+	}
+
+	// 加入调度 进行init
+	Getter::add_actor_into_queue(actor);
+
+}	
+

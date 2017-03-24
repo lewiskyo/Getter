@@ -8,10 +8,12 @@
 #include <mutex>
 #include <unistd.h>
 #include <thread>
-// #include "../Tools/Message.h"
-#include "Message.h"
-// #include "../Tools/Lock.h"
-#include "Lock.h"
+#include <stdlib.h>
+#include <dlfcn.h>
+#include "../Tools/Message.h"
+// #include "Message.h"
+#include "../Tools/Lock.h"
+// #include "Lock.h"
 
 
 namespace Getter
@@ -19,7 +21,7 @@ namespace Getter
 	// 使用 _create 来表示 void* (*)(string);
 	typedef void* (*create)(std::string);   //  对应Actor构造函数
 	typedef bool (*init) ();           //  首次进行任务调度时，需要执行,对创建actor时传来的参数做一些操作等.
-	typedef void (*dispatch)(Message *msg);  //任务调度函数，接收到客户端消息, 其他Actor消息,定时器消息等等的消息分发处理函数.
+	typedef void (*dispatch)(void* Actor, Message *msg);  //任务调度函数，接收到客户端消息, 其他Actor消息,定时器消息等等的消息分发处理函数.
 	typedef void (*destroy)();               //释放Actor自身的资源.
 
 	typedef struct ActorStruct
@@ -69,11 +71,8 @@ namespace Getter
 	typedef struct ActorManager
 	{
 		std::map<uint32_t, Actor*> actor_id_map;
-		std::map<std::string, uint32_t> name_to_id;
 		int id_count;
 		std::mutex mtx;
-		// std::lock_guard<std::mutex> lck (mtx);
-
 
 		ActorManager()
 		{
@@ -132,6 +131,10 @@ namespace Getter
 	void initial();
 
 	void run();
+
+	void new_actor();
+
+	void load_so();
 }
 
 
