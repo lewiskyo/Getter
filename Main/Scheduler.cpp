@@ -40,7 +40,8 @@ void Scheduler::scheduling_actor(Scheduler* scheduler)
 	// 未初始化 先进行初始化
 	if (!processing_actor->is_inited)
 	{
-		processing_actor->actor_struct->_init();	
+		processing_actor->actor_struct->_init();
+		processing_actor->is_inited = true;
 	}
 	// 进行实际调度
 	else
