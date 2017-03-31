@@ -1,2 +1,2 @@
-ActorSoLib/ActorExample.so : ActorSo/ActorExample.cpp
-	g++ -o $@ $^ -fPIC -shared --std=c++0x
+actorsolib/actorexample.so : actorso/actorexample.cpp
+	g++ -o $@ $^ -fPIC -shared --std=c++11

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "../Tools/Message.h"
+#include "../getter/message.h"
 
 using namespace std;
 

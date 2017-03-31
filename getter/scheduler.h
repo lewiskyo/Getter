@@ -1,5 +1,4 @@
-#ifndef SCHEDULER_H
-#define SCHEDULER_H
+#pragma  once
 
 #include <iostream>
 #include <string>
@@ -10,13 +9,12 @@
 #include <thread>
 #include <stdlib.h>
 #include <dlfcn.h>
-#include "../Tools/Message.h"
-// #include "Message.h"
-#include "../Tools/Lock.h"
-// #include "Lock.h"
+#include "message.h"
+#include "lock.h"
+#include "util.h"
 
 
-namespace Scheduler
+namespace getter
 {
 	// 使用 _create 来表示 void* (*)(string);
 	typedef void* (*create)(std::string);   //  对应Actor构造函数
@@ -24,8 +22,7 @@ namespace Scheduler
 	typedef void (*dispatch)(void* Actor, Message *msg);  //任务调度函数，接收到客户端消息, 其他Actor消息,定时器消息等等的消息分发处理函数.
 	typedef void (*destroy)();               //释放Actor自身的资源.
 
-	typedef struct ActorStruct
-	{
+	typedef struct ActorStruct {
 		create _create;
 		init _init;
 		dispatch _dispatch;
@@ -33,16 +30,14 @@ namespace Scheduler
 
 	} ActorStruct;
 
-	// 用于管理加载的Actor
-	typedef struct ActorStructManager
-	{
+	// manage load actorso
+	typedef struct ActorStructManager {
 		std::mutex mtx;
 		std::map<std::string, ActorStruct*> actor_struct_map;
 
 	} ActorStructManager;
 
-	typedef struct Actor
-	{
+	typedef struct Actor {
 		int id;
 		std::string name;    //对应ActorStruct服务名字
 		ActorStruct *actor_struct;
@@ -67,41 +62,57 @@ namespace Scheduler
 
 	} Actor;
 
-	// 管理实际的Actor
-	typedef struct ActorManager
-	{
+	// manage real actors
+	typedef struct ActorManager {
 		std::map<uint32_t, Actor*> actor_id_map;
 		int id_count;
 		std::mutex mtx;
 
-		ActorManager()
-		{
+		ActorManager() {
 			id_count = 1;
 		}
 
 	} ActorManager;
 
-	// 调度单元 跑在对应工作线程上
-	typedef struct Scheduler
-	{
+	// run on each thread
+	typedef struct Scheduler {
+
+		Scheduler();
+
+		Actor* fetchActor();
+		void schedulingActor();
+		void workThread();
+		void startWorkThread();
+		void send(Message*, int);
+
+		void initial();
+		void run();
+		void stop();
+
+
+	// private:
 		Actor* processing_actor;   //指向当前正在处理的Actor.
 
 		std::thread th;
 
-		Scheduler()
-		{
-			processing_actor = NULL;
-		}
 		
 	} Scheduler;
 
 
-	// 全局调度器
-	struct SchedulerManager
-	{
+	// global message queue
+	struct SchedulerMng: private noncopyable {	
+
+		void run();
+		void initial();
+		void stop();
+		static SchedulerMng& getSchedulerMng();
+		int newActor(std::string);
+		void* loadSo(std::string);
+
+	// private:
 		std::vector<Scheduler*> v_schedulers;
 
-		// 对应双队列锁
+		// double queue lock
 		CasLock push_lock;
 		CasLock pop_lock;
 
@@ -111,34 +122,8 @@ namespace Scheduler
 		ActorManager actor_manager;
 		ActorStructManager actor_struct_manager;
 
+		// push actor into queue
+		void addActorIntoGmq(Actor*);
+
 	};
-
-
-
-	// 调度过程中涉及到的函数
-
-	// 尝试从SchedulerManager的任务队列中获取Actor.
-	Actor* fetch_actor();
-	// 将Actor加入调度
-	void add_actor_into_queue(Actor*);
-	// 进行实际的调度
-	void scheduling_actor(Scheduler*);
-	// 工作线程函数
-	void scheduler_thread(Scheduler*);
-	// 发送消息到指定的Actor
-	void send(Message*, int);
-
-	void initial();
-
-	void run();
-
-	void stop();
-
-	int new_actor(std::string);
-
-	void* load_so(std::string);
 }
-
-
-
-#endif
