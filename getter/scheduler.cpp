@@ -32,7 +32,7 @@ int SchedulerMng::newActor(string name) {
 		}
 		else
 		{
-			void* handle = loadSo(name);
+			void* handle = util::loadSo(name);
 			ActorStruct* new_as = new ActorStruct();
 			new_as->_create = (void*(*)(string))dlsym(handle, "create");
 			new_as->_init = (bool(*)())dlsym(handle, "init");
@@ -61,24 +61,6 @@ int SchedulerMng::newActor(string name) {
 
 	return actor->id;
 
-}
-
-void* SchedulerMng::loadSo(string name) {
-    void *handle = NULL;
-
-    string so_path("./actorsolib/actor" + name + ".so");
-
-    //打开动态链接库
-    handle = dlopen(so_path.c_str(), RTLD_LAZY);
-    if (!handle) {
-    	fprintf(stderr, "%s\n", dlerror());
-    	exit(EXIT_FAILURE);
-    }
-
-    //清除之前存在的错误
-    dlerror();
-
-    return handle;
 }
 
 void SchedulerMng::initial() {

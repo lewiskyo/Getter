@@ -13,20 +13,12 @@ TimerMng& TimerMng::getTimerMng() {
     return timer_mng;
 }
 
-long TimerMng::getCurrentTime() {
-	struct timeval tv;
-
-	gettimeofday(&tv,NULL);
-
-	return tv.tv_sec * 1000 + tv.tv_usec / 1000;
-}
-
 
 int TimerMng::create_timer(long after_time, uint32_t src, uint32_t interval = 0) {
 
 	shared_ptr<TimerInfo> timer(new TimerInfo());
 	// struct TimerInfo timer;
-	timer.get()->expire_time = getCurrentTime() + after_time;
+	timer.get()->expire_time = util::getCurrentTime() + after_time;
 	timer.get()->src = src;
 	timer.get()->interval = interval;
 	timer.get()->is_working = true;
@@ -53,7 +45,7 @@ void TimerMng::deleteTimer(uint32_t timer_id) {
 
 void TimerMng::updateTimer() {
 
-	now = getCurrentTime();
+	now = util::getCurrentTime();
 	list<uint32_t> delete_tmp;
 	list<shared_ptr<TimerInfo> > add_tmp;
 

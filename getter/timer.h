@@ -67,7 +67,5 @@ namespace getter {
 		std::thread th;
 
 		long now;          //  当前时间戳
-
-		long getCurrentTime();
 	};
 }

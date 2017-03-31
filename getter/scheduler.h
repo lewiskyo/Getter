@@ -8,7 +8,6 @@
 #include <unistd.h>
 #include <thread>
 #include <stdlib.h>
-#include <dlfcn.h>
 #include "message.h"
 #include "lock.h"
 #include "util.h"
@@ -107,7 +106,6 @@ namespace getter
 		void stop();
 		static SchedulerMng& getSchedulerMng();
 		int newActor(std::string);
-		void* loadSo(std::string);
 
 	// private:
 		std::vector<Scheduler*> v_schedulers;
