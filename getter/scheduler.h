@@ -102,7 +102,7 @@ namespace getter
 	struct SchedulerMng: private noncopyable {	
 
 		void run();
-		void initial();
+		void init();
 		void stop();
 		static SchedulerMng& getSchedulerMng();
 		int newActor(std::string);
