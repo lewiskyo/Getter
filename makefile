@@ -27,7 +27,7 @@ clean:
 
 $(LIBRARY): $(GETTER_OBJECTS)
 		rm -f $@
-			$(AR) -rs $@ $(HANDY_OBJECTS)
+			$(AR) -rs $@ $(GETTER_OBJECTS)
 
 .cpp.o:
 		$(CXX) $(CXXFLAGS) -c $< -o $@
