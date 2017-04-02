@@ -63,7 +63,7 @@ int SchedulerMng::newActor(string name) {
 
 }
 
-void SchedulerMng::initial() {
+void SchedulerMng::init() {
 
 	int thread_count = 3;
 

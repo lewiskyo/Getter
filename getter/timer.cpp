@@ -14,7 +14,7 @@ TimerMng& TimerMng::getTimerMng() {
 }
 
 
-int TimerMng::create_timer(long after_time, uint32_t src, uint32_t interval = 0) {
+int TimerMng::createTimer(long after_time, uint32_t src, uint32_t interval = 0) {
 
 	shared_ptr<TimerInfo> timer(new TimerInfo());
 	// struct TimerInfo timer;
@@ -109,7 +109,7 @@ void TimerMng::workThread() {
 	}
 }
 
-void TimerMng::initial() {
+void TimerMng::init() {
 
 }
 

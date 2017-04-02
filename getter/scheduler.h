@@ -84,7 +84,7 @@ namespace getter
 		void startWorkThread();
 		void send(Message*, int);
 
-		void initial();
+		void init();
 		void run();
 		void stop();
 

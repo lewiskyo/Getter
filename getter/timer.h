@@ -36,13 +36,13 @@ namespace getter {
 
 		TimerMng();
 
-		int create_timer(long, uint32_t, uint32_t );
+		int createTimer(long, uint32_t, uint32_t );
 		void deleteTimer(uint32_t);
 		
 		void updateTimer();
 		void executeTimer();
 
-		void initial();
+		void init();
 		void run();
 		void stop();
 
