@@ -21,6 +21,15 @@ TARGETS = $(LIBRARY)
 
 default: $(TARGETS)
 
+
+install: libgetter.a
+	mkdir -p $(PREFIX)/usr/local/include/getter
+	cp -f getter/*.h $(PREFIX)/usr/local/include/getter
+	cp -f libgetter.a $(PREFIX)/usr/local/lib
+
+uninstall:
+	rm -rf $(PREFIX)/usr/local/include/getter $(PREFIX)/usr/local/lib/libgetter.a
+
 clean:
 			-rm -f $(TARGETS)
 			-rm -f */*.o
