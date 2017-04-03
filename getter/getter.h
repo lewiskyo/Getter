@@ -7,3 +7,6 @@
 #include "threads.h"
 #include "util.h"
 #include "udp.h"
+#include "scheduler.h"
+#include "timer.h"
+

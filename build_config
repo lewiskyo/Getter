@@ -46,7 +46,7 @@ PLATFORM_SHARED_VERSIONED=true
 
 PLATFORM=OS_LINUX
 COMMON_FLAGS="$MEMCMP_FLAG -pthread -DOS_LINUX"
-PLATFORM_LDFLAGS="-pthread"
+PLATFORM_LDFLAGS="-pthread -ldl"
 
 
 $CXX -x c++ - -o $TMPDIR/getter_build_config.out <<EOF
