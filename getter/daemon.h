@@ -1,7 +1,7 @@
 #pragma once
 #include <functional>
 #include <signal.h>
-namespace handy {
+namespace getter {
 
 struct Daemon {
     //exit in parent
