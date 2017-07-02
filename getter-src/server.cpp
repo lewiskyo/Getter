@@ -1,6 +1,6 @@
 #include "server.h"
 
-Server::add_agent(Agent* agent) {
+void Server::add_agent(Agent* agent) {
     MyLockGuard lockguard(&this->prepared_lock);
     prepared_queue.push(agent);
 }
@@ -26,7 +26,7 @@ void Server::init() {
 
     int thread_count = 3;
     
-    for (auto i = 0; i < thread_countl; ++i) {
+    for (auto i = 0; i < thread_count; ++i) {
         auto scheduler = new Scheduler();
         schedulers.push_back(scheduler);
     }

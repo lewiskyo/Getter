@@ -15,7 +15,7 @@ class Server {
 
         std::queue<Agent*> prepared_queue;
         std::queue<Agent*> processing_queue;
-        std::vector<scheduler*> schedulers;
+        std::vector<Scheduler*> schedulers;
 
     public:
         void add_agent(Agent* agent);
@@ -23,6 +23,7 @@ class Server {
 
         void init();
         void run();
+        void stop();
 };
 
 Server getter;
