@@ -1,4 +1,5 @@
-#pragma  once
+#ifndef TIMER_H
+#define TIMER_H
 
 #include <iostream>
 #include <queue>
@@ -15,57 +16,57 @@
 #include "util.h"
 
 
-namespace getter {
-	
-	struct TimerInfo {
-		uint32_t id;           //  分配的唯一id
-		long expire_time;  //  超时时间(增量 ms)
-		uint32_t src;          //  对应是哪个Actor注册的
-		uint32_t interval;     //  循环间隔时间(ms)
-		bool is_working;       //  标记是否还在工作
-	};
 
-	struct TimerComp {
-		bool operator()(const std::shared_ptr<TimerInfo>& lhs, const std::shared_ptr<TimerInfo>& rhs)
-		{
-			return lhs.get()->expire_time < rhs.get()->expire_time;
-		}
-	};
+struct TimerInfo {
+    uint32_t id;           //  分配的唯一id
+    long expire_time;  //  超时时间(增量 ms)
+    uint32_t src;          //  对应是哪个Actor注册的
+    uint32_t interval;     //  循环间隔时间(ms)
+    bool is_working;       //  标记是否还在工作
+};
 
-	struct TimerMng: private noncopyable {
+struct TimerComp {
+    bool operator()(const std::shared_ptr<TimerInfo>& lhs, const std::shared_ptr<TimerInfo>& rhs)
+    {
+        return lhs.get()->expire_time < rhs.get()->expire_time;
+    }
+};
 
-		TimerMng();
+struct TimerMng: private noncopyable {
 
-		int createTimer(long, uint32_t, uint32_t );
-		void deleteTimer(uint32_t);
-		
-		void updateTimer();
-		void executeTimer();
+    TimerMng();
 
-		void init();
-		void run();
-		void stop();
+    int createTimer(long, uint32_t, uint32_t );
+    void deleteTimer(uint32_t);
 
-		void workThread();
+    void updateTimer();
+    void executeTimer();
 
-		static TimerMng& getTimerMng();
+    void init();
+    void run();
+    void stop();
 
-	private:
-		uint32_t id_count;
-		CasLock add_timer_lock;
-		CasLock delete_timer_lock;
+    void workThread();
 
-		std::map<uint32_t, std::shared_ptr<TimerInfo> > timer_map;
-		std::priority_queue<std::shared_ptr<TimerInfo>, std::vector<std::shared_ptr<TimerInfo> >, TimerComp> timer_queue;
+    static TimerMng& getTimerMng();
 
-		// 新添加的定时器列表,在update_timer时再加入到优先队列
-		std::list<std::shared_ptr<TimerInfo> > wait_add_timer_list;
+    private:
+    uint32_t id_count;
+    CasLock add_timer_lock;
+    CasLock delete_timer_lock;
 
-		// 待删除的定时器列表, 再update_timer时再从优先队列和map中删除
-		std::list<uint32_t> delete_timer_id_list;
+    std::map<uint32_t, std::shared_ptr<TimerInfo> > timer_map;
+    std::priority_queue<std::shared_ptr<TimerInfo>, std::vector<std::shared_ptr<TimerInfo> >, TimerComp> timer_queue;
 
-		std::thread th;
+    // 新添加的定时器列表,在update_timer时再加入到优先队列
+    std::list<std::shared_ptr<TimerInfo> > wait_add_timer_list;
 
-		long now;          //  当前时间戳
-	};
-}
+    // 待删除的定时器列表, 再update_timer时再从优先队列和map中删除
+    std::list<uint32_t> delete_timer_id_list;
+
+    std::thread th;
+
+    long now;          //  当前时间戳
+};
+
+#endif

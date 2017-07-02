@@ -1,4 +1,5 @@
 #include "server.h"
+using namespace std;
 
 void Server::add_agent(Agent* agent) {
     MyLockGuard lockguard(&this->prepared_lock);
@@ -36,7 +37,7 @@ void Server::init() {
 void Server::run() {
     
     for (auto iter = schedulers.begin(); iter != schedulers.end(); ++iter) {
-        (*iter)->th = thread((*iter)->work_thread,(*iter));
+        (*iter)->start();
     }
 
     while(1) {

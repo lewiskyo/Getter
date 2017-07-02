@@ -8,6 +8,8 @@
 #include "scheduler.h"
 #include "agent.h"
 
+class Scheduler;
+
 class Server {
     private:
         CasLock prepared_lock;
@@ -26,5 +28,6 @@ class Server {
         void stop();
 };
 
-Server getter;
+static Server getter;
+
 #endif

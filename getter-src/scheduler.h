@@ -8,7 +8,7 @@
 #include "agent.h"
 #include "server.h"
 
-class Schduler {
+class Scheduler {
     public:
         Scheduler();
         Agent * fetch();
@@ -16,7 +16,7 @@ class Schduler {
         void start();
         void scheduling();
         
-    private:
+    public:
         Agent * process_agent; // 处理中的Agent
         std::thread th;
 };
