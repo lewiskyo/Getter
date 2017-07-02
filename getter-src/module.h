@@ -47,6 +47,4 @@ class ModuleHelper {
 
 };
 
-//ModuleHelper mod_helper("sss");
-
 #endif
