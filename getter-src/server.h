@@ -28,6 +28,5 @@ class Server {
         void stop();
 };
 
-static Server getter;
 
 #endif

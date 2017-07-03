@@ -1,3 +1,4 @@
 #include "getter.h"
 
-extern Server getter;
+Server getter;
+TimerMng timermng;

@@ -2,6 +2,7 @@
 using namespace std;
 
 class Server;
+extern Server getter;
 
 Scheduler::Scheduler(){
     process_agent = NULL;
@@ -51,7 +52,8 @@ void Scheduler::work_thread() {
         if (process_agent != NULL) {
             scheduling();
         } else {
-            usleep(1000);
+            printf("nothing to do, sleep\n");
+            usleep(1000000);
         }
     }
 }

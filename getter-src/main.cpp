@@ -1,8 +1,19 @@
 #include "getter.h"
 
-int main(int argc, char *argv[]) {
-    
-    getter.init();
+extern Server getter;
+extern TimerMng timermng;
 
+void init() {
+    timermng.init();
+    getter.init();
+}
+
+void run() {
+    timermng.run();
     getter.run();
+}
+
+int main(int argc, char *argv[]) {
+    init();
+    run();
 }
