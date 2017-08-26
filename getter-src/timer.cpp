@@ -94,8 +94,7 @@ void TimerMng::execute_timer() {
 }
 
 void TimerMng::work_thread() {
-    while(1)
-    {
+    while(1) {
         update_timer();
         execute_timer();
         usleep(1000000);
