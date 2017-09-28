@@ -38,13 +38,18 @@ void Logger::update_log_name() {
     }
     
     // 更新输出日志文件
+    time_t t;
+    struct tm *tmp_time;
+    t = time(NULL);
+    tmp_time = localtime(&t);
     char tmp[64];
-    string new_filename(strftime(tmp,sizeof(tmp), "%04Y%02m%02d%H", now));
+    strftime(tmp, sizeof(tmp), "%04Y%02m%02d%H", tmp_time);
+    string new_filename(tmp);
     cur_log_filename = log_dir + tmp;
     
-    handle = open(cur_log_filename, O_APPEND);
+    handle = open(cur_log_filename.c_str(), O_APPEND);
     if (handle == -1) {
-        fprintf(stdout, "open logfilename %s err", cur_log_filename);
+        fprintf(stdout, "open logfilename %s err", cur_log_filename.c_str());
         exit(1);
     }
 }

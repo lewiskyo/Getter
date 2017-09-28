@@ -7,8 +7,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <thread>
 
 #include "lock.h"
+#include "util.h"
 
 
 class Logger {
@@ -31,6 +33,7 @@ class Logger {
         int handle;            // 当前输出文件句柄
         int last_update_time;   // 上次日志输出时间
         std::thread th;
+        std::string cur_log_filename; // 当前输出日志文件名
     private:
         void update_log_name();
 
