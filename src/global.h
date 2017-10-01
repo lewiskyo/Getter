@@ -1,5 +1,5 @@
-#ifndef GETTER_H
-#define GETTER_H
+#ifndef GLOBAL_H
+#define GLOBAL_H
 
 #include "timer.h"
 #include "server.h"
