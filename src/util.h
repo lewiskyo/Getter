@@ -7,10 +7,10 @@
 
 class util {
     public:
-        static int getSecondsLevelTs();  // 获取秒级时间戳
-        static unsigned long long getMsSecondsLevelTs();  // 获取毫秒级时间戳
-        static bool isSameDay(int, int);    // 判断两个秒级时间戳是否为同一天
-        static bool isSameHour(int, int); // 判断两个秒级时间戳是否为同一个小时
+        static int getSecondsLevelTs();  
+        static unsigned long long getMsSecondsLevelTs();  
+        static bool isSameDay(int, int);    
+        static bool isSameHour(int, int);
 };
 
 

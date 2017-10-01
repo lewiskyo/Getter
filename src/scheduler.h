@@ -17,7 +17,7 @@ class Scheduler {
         void scheduling();
         
     public:
-        Agent * process_agent; // 处理中的Agent
+        Agent * process_agent; 
         std::thread th;
 };
 

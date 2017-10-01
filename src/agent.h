@@ -13,15 +13,15 @@ class Agent {
         Module* mod;
         std::string name;
 
-        std::queue<std::string> prepared_queue; //待处理消息
-        std::queue<std::string> processing_queue; //正在处理的消息
+        std::queue<std::string> prepared_queue; 
+        std::queue<std::string> processing_queue; 
 
-        // prepared_queue锁
+        // prepared_queue
         CasLock prepared_lock;
 
-        bool is_schedule; // 是否正在调度中
-        bool is_init;  // 是否已经执行初始化工作
-        int msg_count; // prepared_queue.size() + processing_queue.size()
+        bool is_schedule; 
+        bool is_init;  
+        int msg_count; 
         int session_id;
         std::string param;
 

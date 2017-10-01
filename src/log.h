@@ -17,8 +17,8 @@ class Logger {
     public:
         Logger(std::string _log_dir);
 
-        void log(std::string);  // 增加日志接口
-        void execute_log();         // 输出日志
+        void log(std::string);  
+        void execute_log();     
 
         void init();
         void run();
@@ -27,13 +27,13 @@ class Logger {
 
     private:
         CasLock lock;       
-        std::list<std::string> prepared_logs; // 待处理的日志列表
-        std::list<std::string> processing_logs; // 正在处理的日志列表
-        std::string log_dir;   // 日志放置路径
-        int handle;            // 当前输出文件句柄
-        int last_update_time;   // 上次日志输出时间
+        std::list<std::string> prepared_logs; 
+        std::list<std::string> processing_logs; 
+        std::string log_dir;   
+        int handle;            
+        int last_update_time;   
         std::thread th;
-        std::string cur_log_filename; // 当前输出日志文件名
+        std::string cur_log_filename; 
     private:
         void update_log_name();
 
