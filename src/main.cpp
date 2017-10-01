@@ -1,4 +1,4 @@
-#include "getter.h"
+#include "global.h"
 
 extern Server getter;
 extern TimerMng timermng;
