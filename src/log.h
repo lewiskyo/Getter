@@ -15,27 +15,27 @@
 
 class Logger {
     public:
-        Logger(std::string _log_dir);
+        Logger(std::string _logDir);
 
         void log(std::string);  
-        void execute_log();     
+        void executeLog();     
 
         void init();
         void run();
         void stop();
-        void work_thread();
+        void workThread();
 
     private:
         CasLock lock;       
-        std::list<std::string> prepared_logs; 
-        std::list<std::string> processing_logs; 
-        std::string log_dir;   
+        std::list<std::string> preparedLogs; 
+        std::list<std::string> processingLogs; 
+        std::string logDir;   
         int handle;            
-        int last_update_time;   
+        int lastUpdateTime;   
         std::thread th;
-        std::string cur_log_filename; 
+        std::string curLogFilename; 
     private:
-        void update_log_name();
+        void updateLogName();
 
 };
 

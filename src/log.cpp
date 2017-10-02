@@ -2,66 +2,64 @@
 
 using namespace std;
 
-Logger::Logger(string _log_dir):log_dir(_log_dir) {
+Logger::Logger(string _logDir):logDir(_logDir) {
 }
 
 void Logger::init(){
-    last_update_time = time((time_t*)NULL);
+    lastUpdateTime = time((time_t*)NULL);
 }
 
 void Logger::run() {
-    th = thread(&Logger::work_thread, this);
+    th = thread(&Logger::workThread, this);
 }
 
 void Logger::stop() {
     th.join();
 }
 
-void Logger::execute_log() {
+void Logger::executeLog() {
     {
         LockGuard guard(&lock);
-        processing_logs.swap(prepared_logs);
+        processingLogs.swap(preparedLogs);
     }
 
-    if (processing_logs.size() == 0) {
+    if (processingLogs.size() == 0) {
         return;
     }
 
-    update_log_name();
+    updateLogName();
     
 }
 
-void Logger::update_log_name() {
+void Logger::updateLogName() {
     int now = time((time_t*)NULL);
-    if ( cur_log_filename.empty() and util::isSameHour(now, last_update_time)) {
+    if ( curLogFilename.empty() and util::isSameHour(now, lastUpdateTime)) {
         return;
     }
     
-    // ���������־�ļ�
-    time_t t;
-    struct tm *tmp_time;
-    t = time(NULL);
-    tmp_time = localtime(&t);
+    time_t t =  time(NULL);
+
+    struct tm *tmpTIme = localtime(&t);
+
     char tmp[64];
-    strftime(tmp, sizeof(tmp), "%04Y%02m%02d%H", tmp_time);
-    string new_filename(tmp);
-    cur_log_filename = log_dir + tmp;
+    strftime(tmp, sizeof(tmp), "%04Y%02m%02d%H", tmpTIme);
+    string newFilename(logDir + tmp);
     
-    handle = open(cur_log_filename.c_str(), O_APPEND);
+    handle = open(curLogFilename.c_str(), O_APPEND);
     if (handle == -1) {
-        fprintf(stdout, "open logfilename %s err", cur_log_filename.c_str());
+        fprintf(stdout, "open logfilename %s err", curLogFilename.c_str());
         exit(1);
     }
 }
 
 void Logger::log(string content) {
     LockGuard guard(&lock);
-    prepared_logs.push_back(content);
+    preparedLogs.push_back(content);
 }
 
-void Logger::work_thread() {
+void Logger::workThread() {
     while(1) {
-        execute_log();
+        executeLog();
         usleep(1000000);
         log("one log loop process finish\n");
     }
