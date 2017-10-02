@@ -10,7 +10,7 @@ Agent * Server::popAgent() {
    LockGuard proGuard(&this->processingLock);
    if (this->processingQueue.empty()) {
         LockGuard preGuard(&this->preparedLock);
-        processing_queue.swap(this->preparedQueue);
+        processingQueue.swap(this->preparedQueue);
    } 
 
    if (this->preparedQueue.empty()) {

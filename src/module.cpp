@@ -35,15 +35,15 @@ void *ModuleHelper::getApi(Module *mod, string api_name) {
 }
 
 bool ModuleHelper::openSym(Module *mod) {
-	mod->create = (void*(*)())get_api(mod, "_create");
-	mod->init = (bool(*)(void*,Agent*,string))get_api(mod, "_init");
-	mod->dispatch =(void(*)(Agent*, string*)) get_api(mod, "_dispatch");
-	mod->destroy = (void(*)())get_api(mod, "_destroy");
+	mod->create = (void*(*)())getApi(mod, "_create");
+	mod->init = (bool(*)(void*,Agent*,string))getApi(mod, "_init");
+	mod->dispatch =(void(*)(Agent*, string*)) getApi(mod, "_dispatch");
+	mod->destroy = (void(*)())getApi(mod, "_destroy");
 
 	return mod->init == NULL;
 }
 
-Module * ModuleHelper::moduleQuery(string name) {
+Module * ModuleHelper::modQuery(string name) {
 	Module *result = modHelper.query(name);
 	if (result)
 		return result;

@@ -1,0 +1,3 @@
+Program('getter', Glob('*.cpp'),
+            LIBS = ['pthread', 'dl'],
+            CCFLAGS = '--std=c++11')

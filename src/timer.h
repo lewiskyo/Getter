@@ -30,7 +30,7 @@ typedef struct TimerInfo {
 struct TimerComp {
     bool operator()(const std::shared_ptr<TimerInfo>& lhs, const std::shared_ptr<TimerInfo>& rhs)
     {
-        return lhs.get()->expire_time < rhs.get()->expire_time;
+        return lhs.get()->expireTime < rhs.get()->expireTime;
     }
 };
 

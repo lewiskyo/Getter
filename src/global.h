@@ -5,7 +5,7 @@
 #include "server.h"
 #include "log.h"
 
-extern Server gServer;
+extern Server server;
 extern TimerMng timerMng;
 extern Logger log;
 

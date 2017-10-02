@@ -28,12 +28,11 @@ void Logger::executeLog() {
     }
 
     updateLogName();
-    
 }
 
 void Logger::updateLogName() {
     int now = time((time_t*)NULL);
-    if ( curLogFilename.empty() and util::isSameHour(now, lastUpdateTime)) {
+    if ( curLogFilename.empty() && util::isSameHour(now, lastUpdateTime)) {
         return;
     }
     

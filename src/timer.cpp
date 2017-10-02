@@ -54,19 +54,19 @@ void TimerMng::updateTimer() {
 
         if(it != timerMap.end())
         {
-            it->second.get()->is_working = false;
+            it->second.get()->isWorking = false;
             timerMap.erase(it);
         }
     }
 
-    list<shared_ptr<TimerInfo> > add_tmp;
+    list<shared_ptr<TimerInfo> > addTmp;
     /* Add timer again, swap for reduce lock compete */
     {
-        LockGuard lockguard(&add_timer_lock);
-        add_tmp.swap(wait_add_timers);
+        LockGuard lockguard(&addTimerLock);
+        addTmp.swap(waitAddTimers);
     }
 
-    for(list<shared_ptr<TimerInfo> >::iterator list_it = add_tmp.begin(); list_it != add_tmp.end(); ++list_it)
+    for(list<shared_ptr<TimerInfo> >::iterator list_it = addTmp.begin(); list_it != addTmp.end(); ++list_it)
     {
         timerQueue.push(*list_it);
         timerMap.insert(pair<int, shared_ptr<TimerInfo> >(list_it->get()->id, *list_it));
@@ -74,7 +74,7 @@ void TimerMng::updateTimer() {
 
 }
 
-void TimerMng::execute_timer() {
+void TimerMng::executeTimer() {
 
     while(!timerQueue.empty())
     {	
@@ -86,7 +86,7 @@ void TimerMng::execute_timer() {
         {
             //cout<< "execute_timer: " << timer_queue.top().get()->id << ", expired_time: " 
             //    << timer_queue.top().get()->expire_time << endl;
-            printf("execute timer: %d, expired_time: %d\n", timerQueue.top().get()->id,
+            printf("execute timer: %d, expired_time: %ld\n", timerQueue.top().get()->id,
             timerQueue.top().get()->expireTime);
         }
 

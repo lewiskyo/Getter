@@ -14,20 +14,20 @@ Agent* Scheduler::fetch() {
 
 void Scheduler::scheduling() {
 
-    if (!processAgent->is_init) {
+    if (!processAgent->isInit) {
         processAgent->init();
-        processAgent->is_init = true;
+        processAgent->isInit = true;
     } else {
         if (processAgent->processingQueue.empty()) {
             LockGuard lockguard(&processAgent->preparedLock);
             processAgent->processingQueue.swap(processAgent->processingQueue);
         }
 
-        auto msg = process_agent->processingQueue.front();
-        process_agent->processingQueue.pop();
+        auto msg = processAgent->processingQueue.front();
+        processAgent->processingQueue.pop();
 
         // real dispatch
-        ModuleHelper::modInstanceDispatch(processAgent->mod, process_agent, &msg); 
+        ModuleHelper::modInstanceDispatch(processAgent->mod, processAgent, &msg); 
 
         {
             LockGuard guard(&processAgent->preparedLock);

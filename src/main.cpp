@@ -1,16 +1,16 @@
 #include "global.h"
 
-extern Server getter;
-extern TimerMng timermng;
+extern Server server;
+extern TimerMng timerMng;
 
 void init() {
-    timermng.init();
-    getter.init();
+    timerMng.init();
+    server.init();
 }
 
 void run() {
-    timermng.run();
-    getter.run();
+    timerMng.run();
+    server.run();
 }
 
 int main(int argc, char *argv[]) {

@@ -14,14 +14,14 @@ Agent::Agent(string name, string param) {
 
 bool Agent::init() {
     
-    Module * mod = ModuleHelper::moduleQuery(this->name);
+    Module *mod = ModuleHelper::modQuery(this->name);
 
     if (mod == NULL)
         return false;
 
     this->mod = mod;
 
-    void *inst = ModuleHelper::getter_module_instance_create(mod);
+    void *inst = ModuleHelper::modInstanceCreate(mod);
     if (inst == NULL)
         return false;
 

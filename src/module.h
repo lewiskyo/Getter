@@ -11,7 +11,7 @@
 
 class Agent;
 
-typedef void * (dlCreate)(void);
+typedef void * (*dlCreate)(void);
 typedef bool (*dlInit)(void* inst, Agent *agent, std::string param );
 typedef void (*dlDispatch)(Agent* agent, std::string* msg); 
 typedef void (*dlDestroy)();
