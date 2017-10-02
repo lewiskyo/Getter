@@ -2,10 +2,8 @@
 
 using namespace std;
 
-Logger::Logger(string _logDir):logDir(_logDir) {
-}
-
-void Logger::init(){
+void Logger::init(string _logDir){
+    logDir  = _logDir;
     lastUpdateTime = time((time_t*)NULL);
 }
 

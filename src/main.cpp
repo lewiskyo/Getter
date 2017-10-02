@@ -1,9 +1,13 @@
 #include "global.h"
 
-extern Server server;
-extern TimerMng timerMng;
+Server server;
+TimerMng timerMng;
+Logger logger;
+ModuleHelper modHelper;
 
 void init() {
+    logger.init("./");
+    modHelper.init("./service");
     timerMng.init();
     server.init();
 }

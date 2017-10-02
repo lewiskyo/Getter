@@ -1,8 +1,8 @@
 #include "scheduler.h"
+#include "global.h"
 using namespace std;
 
 class Server;
-extern Server server;
 
 Scheduler::Scheduler(){
     processAgent = NULL;

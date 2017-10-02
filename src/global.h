@@ -4,9 +4,11 @@
 #include "timer.h"
 #include "server.h"
 #include "log.h"
+#include "module.h"
 
 extern Server server;
 extern TimerMng timerMng;
-extern Logger log;
+extern Logger logger;
+extern ModuleHelper modHelper;
 
 #endif

@@ -1,9 +1,10 @@
 #include "module.h"
+#include "global.h"
 using namespace std;
 
-ModuleHelper modHelper("./service");
 
-ModuleHelper::ModuleHelper(string _path):path(_path) {
+void ModuleHelper::init(string _path){
+	this->path = _path;
 	modules.reserve(32);
 }
 

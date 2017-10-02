@@ -1,5 +1,5 @@
 #ifndef LOG_H
-#define LOG_G
+#define LOG_H
 
 #include <string>
 #include <list>
@@ -15,12 +15,11 @@
 
 class Logger {
     public:
-        Logger(std::string _logDir);
 
         void log(std::string);  
         void executeLog();     
 
-        void init();
+        void init(std::string _logDir);
         void run();
         void stop();
         void workThread();

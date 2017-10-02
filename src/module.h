@@ -44,7 +44,7 @@ class ModuleHelper {
         bool openSym(Module *mod);
 
     public:
-        ModuleHelper(std::string _path);
+        void init(std::string _path);
         static Module *modQuery(std::string name);
         static void *modInstanceCreate(Module *mod);
         static bool modInstanceInit(Module* mod, void *inst, Agent *agent, std::string param);
