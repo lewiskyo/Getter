@@ -5,8 +5,8 @@
 #include "server.h"
 #include "log.h"
 
-extern Server getter;
-extern TimerMng timermng;
+extern Server gServer;
+extern TimerMng timerMng;
 extern Logger log;
 
 #endif

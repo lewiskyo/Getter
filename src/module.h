@@ -11,39 +11,44 @@
 
 class Agent;
 
-typedef void * (*getter_dl_create)(void);
-typedef bool (*getter_dl_init)(void* inst, Agent *agent, std::string param );
-typedef void (*getter_dl_dispatch)(Agent* agent, std::string* msg); 
-typedef void (*getter_dl_destroy)();
+typedef void * (dlCreate)(void);
+typedef bool (*dlInit)(void* inst, Agent *agent, std::string param );
+typedef void (*dlDispatch)(Agent* agent, std::string* msg); 
+typedef void (*dlDestroy)();
 
 typedef struct Module {
     std::string name;
+    /* Point to the service class */
     void *module;
-    getter_dl_create create;
-    getter_dl_init init;
-    getter_dl_dispatch dispatch;
-    getter_dl_destroy destroy;
+
+    /* Four common function */
+    dlCreate create;
+    dlInit init;
+    dlDispatch dispatch;
+    dlDestroy destroy;
 
 } Module;
 
 class ModuleHelper {
     private:
         CasLock lock;
+        /* Save loaded modules */
         std::vector<Module> modules;
+        /* Service path */
         std::string path;
 
     private:
-        void * try_open(std::string name);
+        void * tryOpen(std::string name);
         Module* query(std::string name);
-        void * get_api(Module* mod, std::string api_name);
-        bool open_sym(Module *mod);
+        void * getApi(Module* mod, std::string api_name);
+        bool openSym(Module *mod);
 
     public:
         ModuleHelper(std::string _path);
-        static Module * getter_module_query(std::string name);
-        static void * getter_module_instance_create(Module *mod);
-        static bool getter_module_instance_init(Module* mod, void *inst, Agent *agent, std::string param);
-        static void getter_module_instance_dispatch(Module *mod, Agent* agent, std::string * msg);
+        static Module *modQuery(std::string name);
+        static void *modInstanceCreate(Module *mod);
+        static bool modInstanceInit(Module* mod, void *inst, Agent *agent, std::string param);
+        static void modInstanceDispatch(Module *mod, Agent* agent, std::string * msg);
 
 };
 

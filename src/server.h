@@ -12,16 +12,16 @@ class Scheduler;
 
 class Server {
     private:
-        CasLock prepared_lock;
-        CasLock processing_lock;
+        CasLock preparedLock;
+        CasLock processingLock;
 
-        std::queue<Agent*> prepared_queue;
-        std::queue<Agent*> processing_queue;
+        std::queue<Agent*> preparedQueue;
+        std::queue<Agent*> processingQueue;
         std::vector<Scheduler*> schedulers;
 
     public:
-        void add_agent(Agent* agent);
-        Agent* pop_agent();
+        void addAgent(Agent* agent);
+        Agent* popAgent();
 
         void init();
         void run();

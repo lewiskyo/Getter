@@ -1,23 +1,23 @@
 #include "server.h"
 using namespace std;
 
-void Server::add_agent(Agent* agent) {
-    MyLockGuard lockguard(&this->prepared_lock);
-    prepared_queue.push(agent);
+void Server::addAgent(Agent* agent) {
+    LockGuard guard(&this->preparedLock);
+    preparedQueue.push(agent);
 }
 
-Agent * Server::pop_agent() {
-   MyLockGuard pro_lockguard(&this->processing_lock);
-   if (this->processing_queue.empty()) {
-        MyLockGuard pre_lockguard(&this->prepared_lock);
-        processing_queue.swap(prepared_queue);
+Agent * Server::popAgent() {
+   LockGuard proGuard(&this->processingLock);
+   if (this->processingQueue.empty()) {
+        LockGuard preGuard(&this->preparedLock);
+        processing_queue.swap(this->preparedQueue);
    } 
 
-   if (this->processing_queue.empty()) {
+   if (this->preparedQueue.empty()) {
        return NULL;
    } else {
-       auto agent = processing_queue.front();
-       processing_queue.pop();
+       auto agent = processingQueue.front();
+       processingQueue.pop();
 
        return agent;
    }
@@ -25,13 +25,15 @@ Agent * Server::pop_agent() {
 
 void Server::init() {
 
-    int thread_count = 3;
+    /* todo in config*/
+    int threadCount = 3;
     
-    for (auto i = 0; i < thread_count; ++i) {
+    for (auto i = 0; i < threadCount; ++i) {
         auto scheduler = new Scheduler();
         schedulers.push_back(scheduler);
     }
-    // todo boostrasp
+
+    // todo boot
 }
 
 void Server::run() {

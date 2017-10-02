@@ -6,20 +6,21 @@ TimerMng::TimerMng() {
     id = 1;
 }
 
-int TimerMng::create_timer(long after_time, int src, int interval = 0) {
+int TimerMng::createTimer(long afterTime, int src, int interval = 0) {
 
     shared_ptr<TimerInfo> timer(new TimerInfo());
-    // struct TimerInfo timer;
-    timer.get()->expire_time = 123 + after_time;
+
+    /* Struct TimerInfo timer */
+    timer.get()->expireTime = 123 + afterTime;
     timer.get()->src = src;
     timer.get()->interval = interval;
-    timer.get()->is_working = true;
+    timer.get()->isWorking = true;
 
     {
-        MyLockGuard guard(&add_timer_lock);
+        LockGuard guard(&addTimerLock);
 
         timer.get()->id = id;
-        wait_add_timers.push_back(timer);
+        waitAddTimers.push_back(timer);
 
         ++id;
     }
@@ -27,76 +28,76 @@ int TimerMng::create_timer(long after_time, int src, int interval = 0) {
     return timer.get()->id;
 }
 
-void TimerMng::delete_timer(int timer_id) {
+void TimerMng::deleteTimer(int timerId) {
 
-    MyLockGuard guard(&delete_timer_lock);
-    delete_timer_ids.push_back(timer_id);
+    LockGuard guard(&deleteTimerLock);
+    deleteTimerIds.push_back(timerId);
 }
 
 
-void TimerMng::update_timer() {
+void TimerMng::updateTimer() {
 
     this->now =  123;
-    list<int> delete_tmp;
+    list<int> deleteTmp;
 
-    //先删除定时器 交换元素是为了减少锁的竞争时间
+    /* Delete timer first, swap for deduce lock compete */
     {
-        MyLockGuard lockguard(&delete_timer_lock);
-        delete_tmp.swap(delete_timer_ids);
+        LockGuard guard(&deleteTimerLock);
+        deleteTmp.swap(deleteTimerIds);
     }
 
-    for(list<int>::iterator list_it = delete_tmp.begin(); list_it != delete_tmp.end(); ++list_it)
+    for(list<int>::iterator list_it = deleteTmp.begin(); list_it != deleteTmp.end(); ++list_it)
     {
         map<int, shared_ptr<TimerInfo> >::iterator it;
 
-        it = timer_map.find(*list_it);
+        it = timerMap.find(*list_it);
 
-        if(it != timer_map.end())
+        if(it != timerMap.end())
         {
             it->second.get()->is_working = false;
-            timer_map.erase(it);
+            timerMap.erase(it);
         }
     }
 
     list<shared_ptr<TimerInfo> > add_tmp;
-    //再加入定时器 交换元素减少锁的竞争时间
+    /* Add timer again, swap for reduce lock compete */
     {
-        MyLockGuard lockguard(&add_timer_lock);
+        LockGuard lockguard(&add_timer_lock);
         add_tmp.swap(wait_add_timers);
     }
 
     for(list<shared_ptr<TimerInfo> >::iterator list_it = add_tmp.begin(); list_it != add_tmp.end(); ++list_it)
     {
-        timer_queue.push(*list_it);
-        timer_map.insert(pair<int, shared_ptr<TimerInfo> >(list_it->get()->id, *list_it));
+        timerQueue.push(*list_it);
+        timerMap.insert(pair<int, shared_ptr<TimerInfo> >(list_it->get()->id, *list_it));
     }
 
 }
 
 void TimerMng::execute_timer() {
 
-    while(!timer_queue.empty())
+    while(!timerQueue.empty())
     {	
-        // 第一个未超时,后面的也是未超时
-        if(timer_queue.top().get()->expire_time > this->now)
+        /* Find the first not over time, behind is not over time too, so break */
+        if(timerQueue.top().get()->expireTime > this->now)
             break;
 
-        if (timer_queue.top().get()->is_working)
+        if (timerQueue.top().get()->isWorking)
         {
             //cout<< "execute_timer: " << timer_queue.top().get()->id << ", expired_time: " 
             //    << timer_queue.top().get()->expire_time << endl;
-            printf("execute timer: %d, expired_time: %d\n", timer_queue.top().get()->id,
-                    timer_queue.top().get()->expire_time);
+            printf("execute timer: %d, expired_time: %d\n", timerQueue.top().get()->id,
+            timerQueue.top().get()->expireTime);
         }
 
-        timer_queue.pop();
+        timerQueue.pop();
     }
 }
 
-void TimerMng::work_thread() {
+void TimerMng::workThread() {
     while(1) {
-        update_timer();
-        execute_timer();
+        this->updateTimer();
+        this->executeTimer();
         usleep(1000000);
         printf("timermng one loop start\n");
     }
@@ -107,7 +108,7 @@ void TimerMng::init() {
 }
 
 void TimerMng::run() {
-    th = thread(&TimerMng::work_thread, this);
+    th = thread(&TimerMng::workThread, this);
 }
 
 void TimerMng::stop() {

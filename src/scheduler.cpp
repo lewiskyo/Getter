@@ -2,55 +2,55 @@
 using namespace std;
 
 class Server;
-extern Server getter;
+extern Server server;
 
 Scheduler::Scheduler(){
-    process_agent = NULL;
+    processAgent = NULL;
 }
 
 Agent* Scheduler::fetch() {
-    return getter.pop_agent();
+    return server.popAgent();
 }
 
 void Scheduler::scheduling() {
 
-    if (!process_agent->is_init) {
-        process_agent->init();
-        process_agent->is_init = true;
+    if (!processAgent->is_init) {
+        processAgent->init();
+        processAgent->is_init = true;
     } else {
-        if (process_agent->processing_queue.empty()) {
-            MyLockGuard lockguard(&process_agent->prepared_lock);
-            process_agent->processing_queue.swap(process_agent->prepared_queue);
+        if (processAgent->processingQueue.empty()) {
+            LockGuard lockguard(&processAgent->preparedLock);
+            processAgent->processingQueue.swap(processAgent->processingQueue);
         }
 
-        auto msg = process_agent->processing_queue.front();
-        process_agent->processing_queue.pop();
+        auto msg = process_agent->processingQueue.front();
+        process_agent->processingQueue.pop();
 
         // real dispatch
-        ModuleHelper::getter_module_instance_dispatch(process_agent->mod,process_agent,&msg); 
+        ModuleHelper::modInstanceDispatch(processAgent->mod, process_agent, &msg); 
 
         {
-            MyLockGuard lockguard(&process_agent->prepared_lock);
-            --process_agent->msg_count;
+            LockGuard guard(&processAgent->preparedLock);
+            --processAgent->msgCount;
 
-            if (process_agent->msg_count > 0) {
-
+            if (processAgent->msgCount > 0) {
+                // todo add to gq
             } else {
-                process_agent->is_schedule = false;
+                processAgent->isSchedule = false;
             }
 
-            process_agent = NULL;
+            processAgent = NULL;
         }
     }
 }
 
-void Scheduler::work_thread() {
+void Scheduler::workThread() {
 
     while(true) {
 
-        Agent * process_agent = fetch();
-        if (process_agent != NULL) {
-            scheduling();
+        Agent * processAgent = this->fetch();
+        if (processAgent != NULL) {
+           this-> scheduling();
         } else {
             printf("nothing to do, sleep\n");
             usleep(1000000);
@@ -59,5 +59,5 @@ void Scheduler::work_thread() {
 }
 
 void Scheduler::start() {
-    th = thread(&Scheduler::work_thread, this);
+    th = thread(&Scheduler::workThread, this);
 }

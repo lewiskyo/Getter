@@ -12,12 +12,12 @@ class Scheduler {
     public:
         Scheduler();
         Agent * fetch();
-        void work_thread();
+        void workThread();
         void start();
         void scheduling();
         
     public:
-        Agent * process_agent; 
+        Agent * processAgent; 
         std::thread th;
 };
 

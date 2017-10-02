@@ -15,11 +15,16 @@
 
 
 typedef struct TimerInfo {
-    int id;           //  分配的唯一id
-    long expire_time;  //  超时时间(增量 ms)
-    int src;          //  对应是哪个Actor注册的
-    int interval;     //  循环间隔时间(ms)
-    bool is_working;       //  标记是否还在工作
+    /*  Unique id */
+    int id; 
+    /* Over timestamp (ms) */
+    long expireTime;  
+    /*  record which actor register */
+    int src;         
+    /* If need cycle, record the cyscle time (ms) */
+    int interval;
+    /* Is still working flag */
+    bool isWorking;
 } TimerInfo;
 
 struct TimerComp {
@@ -33,35 +38,36 @@ class TimerMng {
     public:
         TimerMng();
 
-        int create_timer(long, int, int);
-        void delete_timer(int);
+        int createTimer(long, int, int);
+        void deleteTimer(int);
 
-        void update_timer();
-        void execute_timer();
+        void updateTimer();
+        void executeTimer();
 
         void init();
         void run();
         void stop();
 
-        void work_thread();
+        void workThread();
 
     private:
         int id;
-        CasLock add_timer_lock;
-        CasLock delete_timer_lock;
+        CasLock addTimerLock;
+        CasLock deleteTimerLock;
 
-        std::map<int, std::shared_ptr<TimerInfo> > timer_map;
-        std::priority_queue<std::shared_ptr<TimerInfo>, std::vector<std::shared_ptr<TimerInfo> >, TimerComp> timer_queue;
+        std::map<int, std::shared_ptr<TimerInfo> > timerMap;
+        std::priority_queue<std::shared_ptr<TimerInfo>, std::vector<std::shared_ptr<TimerInfo> >, TimerComp> timerQueue;
 
-        // 新添加的定时器列表,在update_timer时再加入到优先队列
-        std::list<std::shared_ptr<TimerInfo> > wait_add_timers;
+        /* New  add timer list,  add on updateTImer function */
+        std::list<std::shared_ptr<TimerInfo> > waitAddTimers;
 
-        // 待删除的定时器列表, 在update_timer时再从优先队列和map中删除
-        std::list<int> delete_timer_ids;
+        /* Waiting delete timer list, delete on updateTimer function. */
+        std::list<int> deleteTimerIds;
 
         std::thread th;
 
-        long now;          //  当前时间戳
+        /*  Current timestamp */
+        long now;          
 };
 
 #endif

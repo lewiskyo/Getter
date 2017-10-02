@@ -3,10 +3,10 @@ using namespace std;
 
 Agent::Agent(string name, string param) {
 
-    this->session_id = 0;
-    this->is_schedule = false;
-    this->is_init = false;
-    msg_count = 0;
+    this->sessionId = 0;
+    this->isSchedule = false;
+    this->isInit = false;
+    msgCount = 0;
     this->param = param;
     this->name = name;
 
@@ -14,7 +14,7 @@ Agent::Agent(string name, string param) {
 
 bool Agent::init() {
     
-    Module * mod = ModuleHelper::getter_module_query(name);
+    Module * mod = ModuleHelper::moduleQuery(this->name);
 
     if (mod == NULL)
         return false;
@@ -27,7 +27,7 @@ bool Agent::init() {
 
     this->instance = inst;
 
-    // todo join globalqueue
+    // Todo add to globalqueue and wait schedule
 
     return true;
 }

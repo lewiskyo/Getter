@@ -19,7 +19,7 @@ void Logger::stop() {
 
 void Logger::execute_log() {
     {
-        MyLockGuard guard(&lock);
+        LockGuard guard(&lock);
         processing_logs.swap(prepared_logs);
     }
 
@@ -37,7 +37,7 @@ void Logger::update_log_name() {
         return;
     }
     
-    // ¸üÐÂÊä³öÈÕÖ¾ÎÄ¼þ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Ä¼ï¿½
     time_t t;
     struct tm *tmp_time;
     t = time(NULL);
@@ -55,7 +55,7 @@ void Logger::update_log_name() {
 }
 
 void Logger::log(string content) {
-    MyLockGuard guard(&lock);
+    LockGuard guard(&lock);
     prepared_logs.push_back(content);
 }
 

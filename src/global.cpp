@@ -1,4 +1,4 @@
 #include "global.h"
 
-Server server;
-TimerMng timermng;
+Server gServer;
+TimerMng timerMng;

@@ -8,26 +8,27 @@
 #include "lock.h"
 
 class Agent {
-    public:
-        void *instance;
-        Module* mod;
-        std::string name;
+	public:
+		/* Point to the service instance */
+		void *instance;
+		Module* mod;
+		std::string name;
 
-        std::queue<std::string> prepared_queue; 
-        std::queue<std::string> processing_queue; 
+		std::queue<std::string> preparedQueue; 
+		std::queue<std::string> processingQueue; 
 
-        // prepared_queue
-        CasLock prepared_lock;
+		// prepared_queue
+		CasLock preparedLock;
 
-        bool is_schedule; 
-        bool is_init;  
-        int msg_count; 
-        int session_id;
-        std::string param;
+		bool isSchedule; 
+		bool isInit;  
+		int msgCount; 
+		int sessionId;
+		std::string param;
 
-    public:
-        Agent(std::string name, std::string param);  
-        bool init();
+	public:
+		Agent(std::string name, std::string param);  
+		bool init();
 };
 
 
